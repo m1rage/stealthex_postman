@@ -1,1 +1,2 @@
-# stealthex_postman
+# Simple Postman collection for Stealthex.io
+
