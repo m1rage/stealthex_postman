@@ -1,0 +1,380 @@
+{
+	"info": {
+		"_postman_id": "d9f48664-6cce-4100-9d3f-60403d9d97a2",
+		"name": "stealthex.io",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "10428754"
+	},
+	"item": [
+		{
+			"name": "getRange",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.collectionVariables.set(\"min_amount\", jsonData.min_amount);\r",
+							"pm.collectionVariables.set(\"max_amount\", jsonData.max_amount);\r",
+							"\r",
+							"//console.log(pm.collectionVariables.get(\"min_amount\"));\r",
+							"//console.log(pm.collectionVariables.get(\"max_amount\"));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "in",
+							"value": "query",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "api_key",
+							"type": "string"
+						},
+						{
+							"key": "value",
+							"value": "447af0aa-72b6-43bc-8ad8-b748cefff90b",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://{{site}}/api/v2/range/btc/eth?fixed=true",
+					"protocol": "https",
+					"host": [
+						"{{site}}"
+					],
+					"path": [
+						"api",
+						"v2",
+						"range",
+						"btc",
+						"eth"
+					],
+					"query": [
+						{
+							"key": "fixed",
+							"value": "true"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getMinMaxAmount",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.collectionVariables.set(\"min_amount\", jsonData.min_amount);\r",
+							"pm.collectionVariables.set(\"max_amount\", jsonData.max_amount);\r",
+							"\r",
+							"//console.log(pm.collectionVariables.get(\"min_amount\"));\r",
+							"//console.log(pm.collectionVariables.get(\"max_amount\"));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "in",
+							"value": "query",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "api_key",
+							"type": "string"
+						},
+						{
+							"key": "value",
+							"value": "447af0aa-72b6-43bc-8ad8-b748cefff90b",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://{{site}}/api/v2/min/btc/usdt",
+					"protocol": "https",
+					"host": [
+						"{{site}}"
+					],
+					"path": [
+						"api",
+						"v2",
+						"min",
+						"btc",
+						"usdt"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createExchange BTC → ETH with minimum value",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//Get minimum value\r",
+							"pm.sendRequest('https://api.stealthex.io/api/v2/min/btc/eth?api_key=447af0aa-72b6-43bc-8ad8-b748cefff90b', function (response) {\r",
+							"    if (response) {\r",
+							"        var responseBody = response.json();\r",
+							"        pm.collectionVariables.set('min_amount', responseBody.min_amount);\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"//Get random ETH address\r",
+							"pm.sendRequest({\r",
+							"    url: 'https://api.blockcypher.com/v1/eth/main/addrs?token=943dcf924f31406d8cdc4094b7d7da11',\r",
+							"    method: 'POST',\r",
+							"    header: 'Content-Type: application/json',\r",
+							"    body: {},\r",
+							"   }, function (response) {\r",
+							"    if (response) {\r",
+							"    var jsonData = response.json();\r",
+							"    var addressValue = jsonData.address;\r",
+							"    pm.collectionVariables.set('eth_addr', addressValue);\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"//Converting an address to the correct format\r",
+							"let ethAddrValue = pm.variables.get(\"eth_addr\");\r",
+							"let modifiedEthAddr = \"0x\" + ethAddrValue;\r",
+							"pm.variables.set(\"eth_addr\", modifiedEthAddr);\r",
+							"\r",
+							"// console.log(pm.collectionVariables.get(\"min_amount\"));\r",
+							"// console.log(pm.collectionVariables.get(\"eth_addr\"));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true,
+					"accept": true,
+					"user-agent": true,
+					"accept-encoding": true,
+					"connection": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "in",
+							"value": "query",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "api_key",
+							"type": "string"
+						},
+						{
+							"key": "value",
+							"value": "447af0aa-72b6-43bc-8ad8-b748cefff90b",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"currency_from\": \"btc\",\r\n\"currency_to\": \"eth\",\r\n\"address_to\": \"{{eth_addr}}\",\r\n\"amount_from\": \"{{min_amount}}\"\r\n}"
+				},
+				"url": {
+					"raw": "https://{{site}}/api/v3/exchange",
+					"protocol": "https",
+					"host": [
+						"{{site}}"
+					],
+					"path": [
+						"api",
+						"v3",
+						"exchange"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createExchange BTC → ETH with maximum value",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"//Get random ETH address\r",
+							"pm.sendRequest('https://api.stealthex.io/api/v2/min/btc/eth?api_key=447af0aa-72b6-43bc-8ad8-b748cefff90b', function (response) {\r",
+							"    if (response) {\r",
+							"        var responseBody = response.json();\r",
+							"        pm.collectionVariables.set('max_amount', responseBody.max_amount);\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"//Get random ETH address\r",
+							"pm.sendRequest({\r",
+							"    url: 'https://api.blockcypher.com/v1/eth/main/addrs?token=943dcf924f31406d8cdc4094b7d7da11',\r",
+							"    method: 'POST',\r",
+							"    header: 'Content-Type: application/json',\r",
+							"    body: {},\r",
+							"   }, function (response) {\r",
+							"    if (response) {\r",
+							"    var jsonData = response.json();\r",
+							"    var addressValue = jsonData.address;\r",
+							"    pm.collectionVariables.set('eth_addr', addressValue);\r",
+							"    }\r",
+							"});\r",
+							"\r",
+							"//Converting an address to the correct format\r",
+							"let ethAddrValue = pm.variables.get(\"eth_addr\");\r",
+							"let modifiedEthAddr = \"0x\" + ethAddrValue;\r",
+							"pm.variables.set(\"eth_addr\", modifiedEthAddr);\r",
+							"\r",
+							"// console.log(pm.collectionVariables.get(\"min_amount\"));\r",
+							"// console.log(pm.collectionVariables.get(\"eth_addr\"));"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"content-type": true,
+					"accept": true,
+					"user-agent": true,
+					"accept-encoding": true,
+					"connection": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "in",
+							"value": "query",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "api_key",
+							"type": "string"
+						},
+						{
+							"key": "value",
+							"value": "447af0aa-72b6-43bc-8ad8-b748cefff90b",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n\"currency_from\": \"btc\",\r\n\"currency_to\": \"eth\",\r\n\"address_to\": \"{{eth_addr}}\",\r\n\"amount_from\": \"{{min_amount}}\"\r\n}"
+				},
+				"url": {
+					"raw": "https://{{site}}/api/v3/exchange",
+					"protocol": "https",
+					"host": [
+						"{{site}}"
+					],
+					"path": [
+						"api",
+						"v3",
+						"exchange"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "apikey"
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "site",
+			"value": "api.stealthex.io",
+			"type": "string"
+		},
+		{
+			"key": "min_amount",
+			"value": ""
+		},
+		{
+			"key": "max_amount",
+			"value": ""
+		},
+		{
+			"key": "eth_addr",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
